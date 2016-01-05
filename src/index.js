@@ -1,3 +1,5 @@
 import configureStore from './store/configureStore'
 
-export const store = configureStore()
+export * from './actions'
+
+export default configureStore()

@@ -22,7 +22,9 @@ Test.propTypes = {
 }
 
 function mapStateToProps(state) {
-  return {}
+  return {
+    entities: state.entities
+  }
 }
 
 export default connect(mapStateToProps)(Test)

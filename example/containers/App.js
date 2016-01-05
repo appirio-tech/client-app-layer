@@ -1,31 +1,14 @@
-import React, { Component, PropTypes } from 'react'
+import React from 'react'
 import { connect } from 'react-redux'
-import { resetErrorMessage } from '../../src/actions'
 
-class App extends Component {
-  constructor(props) {
-    super(props)
-  }
-
-  render() {
-    const { children } = this.props
-    return (
-      <div>
-        Hello world!
-        {children}
-      </div>
-    )
-  }
-}
-
-App.propTypes = {
-  // Injected by React Router
-  children: PropTypes.node
-}
+const App = ({ children, users }) =>
+  <pre>
+    {JSON.stringify(users, null, 2)}
+  </pre>
 
 function mapStateToProps(state) {
   return {
-    errorMessage: state.errorMessage,
+    users: state.entities.users
   }
 }
 
