@@ -2,6 +2,7 @@
   "name": "appirio-tech-client-app-layer",
   "version": "0.0.0",
   "license": "MIT",
+  "main": "./src/index.js",
   "dependencies": {
     "history": "^1.17.0",
     "html-webpack-plugin": "^1.7.0",
