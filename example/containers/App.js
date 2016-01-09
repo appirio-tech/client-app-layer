@@ -1,14 +1,14 @@
 import React from 'react'
 import { connect } from 'react-redux'
 
-const App = ({ children, users }) =>
+const App = ({ children, profiles }) =>
   <pre>
-    {JSON.stringify(users, null, 2)}
+    {JSON.stringify(profiles, null, 2)}
   </pre>
 
 function mapStateToProps(state) {
   return {
-    users: state.entities.users
+    profiles: state.entities.profiles
   }
 }
 

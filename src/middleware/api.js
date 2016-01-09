@@ -1,24 +1,30 @@
-import { Schema, arrayOf, normalize } from 'normalizr'
+import { normalize } from 'normalizr'
+import Schemas from './schemas'
 import fetch from 'isomorphic-fetch'
 import decode from 'jwt-decode'
 import checkAuth from './check-auth'
-
-const API_ROOT = 'https://api-work.topcoder-dev.com'
 
 const trim = (token) => token.substring(1, token.length - 1)
 
 // Fetches an API response and normalizes the result JSON according to schema.
 // This makes every API response have the same shape, regardless of how nested it was.
-const callApi = function(endpoint, schema) {
-  const fullUrl = (endpoint.indexOf(API_ROOT) === -1) ? API_ROOT + endpoint : endpoint
+const callApi = function(callAPI) {
+  const { schema, endpoint, ignoreResult, method, body } = callAPI
   const token = trim(localStorage.userJWTToken)
+
   const config = {
     headers: {
-      'Authorization': 'Bearer ' + token
-    }
+      'Authorization': 'Bearer ' + token,
+      'Content-Type': 'application/json;charset=UTF-8'
+    },
+    method: method || 'GET'
   }
 
-  return fetch(fullUrl, config)
+  if (body) {
+    config.body = JSON.stringify(body)
+  }
+
+  return fetch(endpoint, config)
     .then(response =>
       response.json().then(json => ({ json, response }))
     ).then(({ json, response }) => {
@@ -26,27 +32,12 @@ const callApi = function(endpoint, schema) {
         return Promise.reject(json)
       }
 
-      return Object.assign({},
-        normalize(json.result.content, schema)
-      )
+      if (ignoreResult) {
+        return {}
+      } else {
+        return Object.assign({}, normalize(json.result.content, schema))
+      }
     })
-}
-
-// We use this Normalizr schemas to transform API responses from a nested form
-// to a flat form where repos and users are placed in `entities`, and nested
-// JSON objects are replaced with their IDs. This is very convenient for
-// consumption by reducers, because we can easily build a normalized tree
-// and keep it updated as we fetch more data.
-
-// Read more about Normalizr: https://github.com/gaearon/normalizr
-
-const userSchema = new Schema('users', {
-  idAttribute: 'userId'
-})
-
-export const Schemas = {
-  USER: userSchema,
-  USER_ARRAY: arrayOf(userSchema)
 }
 
 // Action key that carries API call info interpreted by this Redux middleware.
@@ -61,7 +52,7 @@ export default store => next => action => {
   }
 
   let { endpoint } = callAPI
-  const { schema, types } = callAPI
+  const { types } = callAPI
 
   if (typeof endpoint === 'function') {
     endpoint = endpoint(store.getState())
@@ -69,9 +60,6 @@ export default store => next => action => {
 
   if (typeof endpoint !== 'string') {
     throw new Error('Specify a string endpoint URL.')
-  }
-  if (!schema) {
-    throw new Error('Specify one of the exported Schemas.')
   }
   if (!Array.isArray(types) || types.length !== 3) {
     throw new Error('Expected an array of three action types.')
@@ -89,17 +77,15 @@ export default store => next => action => {
   const [ requestType, successType, failureType ] = types
   next(actionWith({ type: requestType }))
 
-  checkAuth().then( () => {
-    callApi(endpoint, schema).then(
-      response => next(actionWith({
-        response,
-        type: successType
-      })),
-      error => next(actionWith({
-        type: failureType,
-        error: error.message || 'Something bad happened'
-      }))
-    )
-  })
+  checkAuth()
+    .then( () => callApi(callAPI) )
+    .then( response => {
+      const successAction = actionWith({ response, type: successType })
+      next(successAction)
+    })
+    .catch( error => {
+      const errorAction = actionWith({type: failureType, error: error.message || 'Something bad happened'})
+      next(errorAction)
+    })
 
 }
