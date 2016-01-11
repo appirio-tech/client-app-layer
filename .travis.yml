@@ -4,7 +4,7 @@ node_js:
 before_install:
 - npm install
 script:
-- webpack
+- webpack --bail --progress --build
 sudo: false
 before_deploy:
 - npm-prepublish --verbose
