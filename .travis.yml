@@ -3,8 +3,6 @@ node_js:
 - 5.2.0
 before_install:
 - npm install
-script:
-- webpack --bail --progress --build
 sudo: false
 before_deploy:
 - npm-prepublish --verbose
