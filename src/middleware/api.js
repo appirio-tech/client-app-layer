@@ -1,6 +1,6 @@
 import { normalize } from 'normalizr'
 import Schemas from './schemas'
-import fetch from 'isomorphic-fetch'
+import axios from 'axios'
 import decode from 'jwt-decode'
 import checkAuth from './check-auth'
 
@@ -13,35 +13,32 @@ const callApi = function(callAPI) {
   const token = trim(localStorage.userJWTToken)
 
   const config = {
+    url: endpoint,
+    method: method || 'GET',
     headers: {
       'Authorization': 'Bearer ' + token,
       'Content-Type': 'application/json;charset=UTF-8'
-    },
-    method: method || 'GET'
+    }
   }
 
   if (body) {
     config.body = JSON.stringify(body)
   }
 
-  return fetch(endpoint, config)
-    .then(response =>
-      response.json().then(json => ({ json, response }))
-    ).then(({ json, response }) => {
-      if (!response.ok) {
-        return Promise.reject(json)
-      }
-
+  return axios(config)
+    .then( (res) => {
       if (ignoreResult) {
         return {}
       } else {
-        return Object.assign({}, normalize(json.result.content, schema))
+        var body = res.data.result.content
+
+        return Object.assign({}, normalize(body, schema))
       }
     })
 }
 
 // Action key that carries API call info interpreted by this Redux middleware.
-export const CALL_API = Symbol('Call API')
+export const CALL_API = 'CALL_API'
 
 // A Redux middleware that interprets actions with CALL_API info specified.
 // Performs the call and promises when such actions are dispatched.
