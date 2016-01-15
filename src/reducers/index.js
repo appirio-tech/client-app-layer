@@ -8,9 +8,7 @@ const defaultState = {
 }
 
 function user(state, action) {
-  return {
-    id: "23061405"
-  }
+  return state || {}
 }
 
 // Updates an entity cache in response to any action with response.entities.
