@@ -1,12 +1,13 @@
 {
   "name": "appirio-tech-client-app-layer",
-  "repository" : {
-    "type" : "git",
-    "url" : "https://github.com/appirio-tech/client-app-layer.git"
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/appirio-tech/client-app-layer.git"
   },
   "license": "MIT",
   "main": "./src/index.js",
   "dependencies": {
+    "axios": "^0.8.1",
     "history": "^1.17.0",
     "html-webpack-plugin": "^1.7.0",
     "humps": "^0.6.0",
