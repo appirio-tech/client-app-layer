@@ -24,7 +24,7 @@ export default function() {
     return refreshPromise
   }
 
-  const API_URL = process.env.API_URL || 'https://api-work.topcoder-dev.com'
+  const API_URL = process.env.API_URL || 'https://api.topcoder.com'
   const url = API_URL + '/v3/authorizations/1'
   const config = {
     headers: {

@@ -1,4 +1,4 @@
-import { normalize } from 'normalizr'
+import { normalize, Schema } from 'normalizr'
 import Schemas from './schemas'
 import axios from 'axios'
 import decode from 'jwt-decode'
@@ -30,15 +30,13 @@ const callApi = function(callAPI) {
       if (ignoreResult) {
         return {}
       } else {
-        var body = res.data.result.content
-
-        return Object.assign({}, normalize(body, schema))
+        return Object.assign({}, normalize(res.data.result.content, schema))
       }
     })
 }
 
 // Action key that carries API call info interpreted by this Redux middleware.
-export const CALL_API = 'CALL_API'
+export const CALL_API = Symbol('CALL_API')
 
 // A Redux middleware that interprets actions with CALL_API info specified.
 // Performs the call and promises when such actions are dispatched.

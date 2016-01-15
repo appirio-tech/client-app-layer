@@ -5,7 +5,7 @@ export const PROFILE_GET_REQUEST = 'PROFILE_GET_REQUEST'
 export const PROFILE_GET_SUCCESS = 'PROFILE_GET_SUCCESS'
 export const PROFILE_GET_FAILURE = 'PROFILE_GET_FAILURE'
 
-const API_ROOT = 'https://api-work.topcoder-dev.com'
+const API_ROOT = process.env.API_URL || 'https://api.topcoder.com'
 
 function getProfile(id) {
   return {
