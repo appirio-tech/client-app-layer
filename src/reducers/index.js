@@ -1,14 +1,19 @@
 import * as ActionTypes from '../actions'
 import merge from 'lodash/object/merge'
-import {reducer as formReducer} from 'redux-form'
+import { reducer as formReducer } from 'redux-form'
 import { combineReducers } from 'redux'
+import { SET_USER } from '../middleware/check-user'
 
 const defaultState = {
   profiles: {}
 }
 
-function user(state, action) {
-  return state || {}
+function user(state = {}, action) {
+  if (action.type == SET_USER) {
+    state = action.user
+  }
+
+  return state
 }
 
 // Updates an entity cache in response to any action with response.entities.

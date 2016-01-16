@@ -1,50 +1,68 @@
 import decode from 'jwt-decode'
 import fetch from 'isomorphic-fetch'
 import axios from 'axios'
+import { CALL_API } from '../middleware/api'
 
 const trim = (token) => token.substring(1, token.length - 1)
 const expiresIn = (token) => Math.round(decode(token).exp - Date.now() / 1000)
 
+const API_URL = process.env.API_URL || 'https://api.topcoder.com'
+const AUTH0_TOKEN_NAME = process.env.AUTH0_TOKEN_NAME || 'userJWTToken'
+
+// Bind our token refreshes to the same promise chain
 let refreshPromise = null
 
-export default function() {
+export default store => next => action => {
+
+  // Continue if there is no API call associated
+  if (typeof action[CALL_API] === 'undefined') {
+    return next(action)
+  }
+
   const token = trim(localStorage.userJWTToken)
   const expires = expiresIn(token)
   const fresh = expires > 60
 
-  console.log(token)
-
+  // Continue if the token is fresh
   if (fresh) {
-    return Promise.resolve(null)
+    return next(action)
   }
 
-  console.log(`Token will expire in ${ expires } seconds. Getting a new one.`)
-
+  // If we are already refreshing the token for other actions, append this
+  // request to the chain
   if (refreshPromise) {
-    return refreshPromise
+    return refreshPromise = refreshPromise.then( () => next(action) )
   }
 
-  const API_URL = process.env.API_URL || 'https://api.topcoder.com'
-  const url = API_URL + '/v3/authorizations/1'
+  // Configure our fresh request
   const config = {
+    url: API_URL + '/v3/authorizations/1',
     headers: {
       'Authorization': 'Bearer ' + token
     }
   }
 
-  return refreshPromise = axios.get(url)
-    .then( res => res.json() )
-    .then( json => {
-      if (json.result.status === 200) {
-        console.log(json.result.content.token)
+  refreshPromise = axios(config)
+    .then( res => {
+      if (res.status === 200) {
+        // Get token from response
+        const newToken = '"' + res.data.result.content.token + '"'
 
-        localStorage.setItem('userJWTToken', '"' + json.result.content.token + '"')
+        // Assign it to local storage
+        localStorage.setItem(AUTH0_TOKEN_NAME, newToken)
+
+        // Clear our promise chain
         refreshPromise = null
-        console.log(`Token refreshed. Completing blocked API requests`)
+
+        // Continue with our action
         next(action)
+      } else {
+        throw 'Token refresh failed'
       }
     })
     .catch( (err) => {
       refreshPromise = null
     })
+
+  return refreshPromise
 }

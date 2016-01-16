@@ -2,7 +2,6 @@ import { normalize, Schema } from 'normalizr'
 import Schemas from './schemas'
 import axios from 'axios'
 import decode from 'jwt-decode'
-import checkAuth from './check-auth'
 
 const trim = (token) => token.substring(1, token.length - 1)
 
@@ -72,8 +71,7 @@ export default store => next => action => {
   const [ requestType, successType, failureType ] = types
   next(actionWith({ type: requestType }))
 
-  checkAuth()
-    .then( () => callApi(callAPI) )
+  return callApi(callAPI)
     .then( response => {
       const successAction = actionWith({ response, type: successType })
       next(successAction)
