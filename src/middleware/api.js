@@ -21,7 +21,7 @@ const callApi = function(callAPI) {
   }
 
   if (body) {
-    config.body = JSON.stringify(body)
+    config.data = JSON.stringify(body)
   }
 
   return axios(config)
