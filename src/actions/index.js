@@ -1,2 +1,5 @@
-export * from './profile'
+export * from './profiles'
+export * from './projects'
+export * from './steps'
+export * from './stepsByProject'
 export * from './user'

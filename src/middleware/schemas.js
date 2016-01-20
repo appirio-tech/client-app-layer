@@ -4,7 +4,12 @@ const profileSchema = new Schema('profiles', {
   idAttribute: 'userId'
 })
 
+const projectSchema = new Schema('projects')
+const stepSchema = new Schema('steps')
+
 export const Schemas = {
   PROFILE: profileSchema,
-  PROFILE_ARRAY: arrayOf(profileSchema)
+  PROJECT: projectSchema,
+  STEP: stepSchema,
+  STEP_ARRAY: arrayOf(stepSchema)
 }
