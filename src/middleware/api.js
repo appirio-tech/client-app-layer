@@ -43,3 +43,4 @@ export default function callApi({ schema, endpoint, ignoreResult, method, data }
     .then(executeRequest)
     .then(handleResponse)
 }
+
