@@ -20,6 +20,6 @@ export default {
   STEP_ARRAY: arrayOf(stepSchema)
   ATTACHMENT      : attachmentSchema,
   ATTACHMENT_ARRAY: arrayOf(attachmentSchema),
-  UPLOAD_URL      : uploadUrlSchema,
-  UPLOAD_URL_ARRAY: arrayOf(uploadUrlSchema)
+  UPLOAD_URL       : uploadUrlSchema,
+  UPLOAD_URL_ARRAY : arrayOf(uploadUrlSchema)
 }
