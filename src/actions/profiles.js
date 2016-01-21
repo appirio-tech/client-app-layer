@@ -5,13 +5,13 @@ export const PROFILE_GET_REQUEST = 'PROFILE_GET_REQUEST'
 export const PROFILE_GET_SUCCESS = 'PROFILE_GET_SUCCESS'
 export const PROFILE_GET_FAILURE = 'PROFILE_GET_FAILURE'
 
-const API_ROOT = process.env.API_URL || 'https://api.topcoder.com'
+
 
 function getProfile(id) {
   return {
     [CALL_API]: {
       types: [ PROFILE_GET_REQUEST, PROFILE_GET_SUCCESS, PROFILE_GET_FAILURE ],
-      endpoint: `${API_ROOT}/v3/profiles/${id}`,
+      endpoint: `/v3/profiles/${id}`,
       schema: Schemas.PROFILE
     }
   }

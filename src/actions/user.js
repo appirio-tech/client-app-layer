@@ -8,8 +8,6 @@ export const UPDATE_PASSWORD_REQUEST = 'UPDATE_PASSWORD_REQUEST'
 export const UPDATE_PASSWORD_SUCCESS = 'UPDATE_PASSWORD_SUCCESS'
 export const UPDATE_PASSWORD_FAILURE = 'UPDATE_PASSWORD_FAILURE'
 
-const API_ROOT = process.env.API_URL || 'https://api.topcoder.com'
-
 // Fetches a single user from Github API.
 // Relies on the custom API middleware defined in ../middleware/api.js.
 function fetchUser(id) {
@@ -52,7 +50,7 @@ export function updatePassword({ currentPassword, password }) {
     dispatch({
       [CALL_API]: {
         types: [ UPDATE_PASSWORD_REQUEST, UPDATE_PASSWORD_SUCCESS, UPDATE_PASSWORD_FAILURE ],
-        endpoint: `${API_ROOT}/v3/users/${id}/`,
+        endpoint: `/v3/users/${id}/`,
         method: 'PATCH',
         ignoreResult: true,
         body
