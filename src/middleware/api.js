@@ -5,6 +5,8 @@ import decode from 'jwt-decode'
 
 const trim = (token) => token.substring(1, token.length - 1)
 
+const API_ROOT = process.env.API_URL || 'https://api.topcoder.com'
+
 // Fetches an API response and normalizes the result JSON according to schema.
 // This makes every API response have the same shape, regardless of how nested it was.
 const callApi = function(callAPI) {
@@ -12,7 +14,7 @@ const callApi = function(callAPI) {
   const token = trim(localStorage.userJWTToken)
 
   const config = {
-    url: endpoint,
+    url: API_ROOT + endpoint,
     method: method || 'GET',
     headers: {
       'Authorization': 'Bearer ' + token,
