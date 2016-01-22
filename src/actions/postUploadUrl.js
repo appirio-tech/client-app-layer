@@ -5,16 +5,14 @@ export const UPLOAD_URL_POST_REQUEST = 'UPLOAD_URL_POST_REQUEST'
 export const UPLOAD_URL_POST_SUCCESS = 'UPLOAD_URL_POST_SUCCESS'
 export const UPLOAD_URL_POST_FAILURE = 'UPLOAD_URL_POST_FAILURE'
 
-const API_ROOT = process.env.API_URL || 'https://api.topcoder.com'
-
-export default function createUploadUrl({ id, assetType, category, name, type }) {
+export default function postUploadUrl({ id, assetType, category, name, type }) {
   return dispatch => {
     dispatch({
       type: UPLOAD_URL_POST_REQUEST
     })
 
     const options = {
-      endpoint: `${API_ROOT}/v3/attachments/uploadurl`,
+      endpoint: '/v3/attachments/uploadurl',
       method  : 'POST',
       schema  : Schemas.UPLOAD_URL_ARRAY,
       body: {

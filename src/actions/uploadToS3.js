@@ -1,5 +1,6 @@
 import axios from 'axios'
-import createUploadUrl from './uploadUrl'
+import postUploadUrl from './postUploadUrl'
+import postAttachment from './postAttachment'
 
 export const S3_UPLOAD_REQUEST  = 'S3_UPLOAD_REQUEST'
 export const S3_UPLOAD_PROGRESS = 'S3_UPLOAD_PROGRESS'
@@ -10,7 +11,9 @@ export function uploadToS3({ id, assetType, category, file }) {
   return dispatch => {
     const { name, type } = file
 
-    const success = res => {
+    const success = res => { // created upload url
+      const { filePath } = res.result
+
       dispatch({
         type: S3_UPLOAD_REQUEST
       })
@@ -24,13 +27,15 @@ export function uploadToS3({ id, assetType, category, file }) {
         }
       }
 
-      const success = (res) => {
+      const success = res => { // uploaded to S3
         dispatch({
           type: S3_UPLOAD_SUCCESS
         })
+
+        postAttachment({ id, assetType, category, file, filePath})(dispatch).then.catch
       }
 
-      const error = (res) => {
+      const error = res => {
         dispatch({
           type: S3_UPLOAD_FAILURE
         })
@@ -41,6 +46,6 @@ export function uploadToS3({ id, assetType, category, file }) {
       return res
     }
 
-    createUploadUrl({ id, assetType, category, name, type })(dispatch).then(success)
+    postUploadUrl({ id, assetType, category, name, type })(dispatch).then(success)
   }
 }
