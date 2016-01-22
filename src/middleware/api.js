@@ -7,8 +7,7 @@ const trim = (token) => token.substring(1, token.length - 1)
 
 // Fetches an API response and normalizes the result JSON according to schema.
 // This makes every API response have the same shape, regardless of how nested it was.
-const callApi = function(callAPI) {
-  const { schema, endpoint, ignoreResult, method, body } = callAPI
+export function callApi({ schema, endpoint, ignoreResult, method, data }) {
   const token = trim(localStorage.userJWTToken)
 
   const config = {
@@ -20,8 +19,8 @@ const callApi = function(callAPI) {
     }
   }
 
-  if (body) {
-    config.data = JSON.stringify(body)
+  if (data) {
+    config.data = JSON.stringify(data)
   }
 
   return axios(config)

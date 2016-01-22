@@ -7,9 +7,9 @@ import user from './user'
 
 const rootReducer = combineReducers({
   entities,
-  form,
   stepsByProject,
-  user
+  user,
+  form
 })
 
 export default rootReducer
