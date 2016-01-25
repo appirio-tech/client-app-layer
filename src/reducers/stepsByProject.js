@@ -41,17 +41,12 @@ export default function stepsByProject(state = {}, action) {
       const project = state[action.projectId]
       const stepId = action.response.result
 
-      const before = project.items
-      const after = union(project.items, [stepId])
-
-      const newState = merge({}, state, {
-        [action.projectId]: {
-          items: after
-        }
-      })
-
       if (project) {
-        return newState
+        return merge({}, state, {
+          [action.projectId]: {
+            items: union(project.items, [ stepId ])
+          }
+        })
       }
 
     default:
