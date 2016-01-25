@@ -1,51 +1,30 @@
-import axios from 'axios'
-import postUploadUrl from './postUploadUrl'
-import postAttachment from './postAttachment'
-
 export const S3_UPLOAD_REQUEST  = 'S3_UPLOAD_REQUEST'
 export const S3_UPLOAD_PROGRESS = 'S3_UPLOAD_PROGRESS'
 export const S3_UPLOAD_SUCCESS  = 'S3_UPLOAD_SUCCESS'
 export const S3_UPLOAD_FAILURE  = 'S3_UPLOAD_FAILURE'
 
-export function uploadToS3({ id, assetType, category, file }) {
-  return dispatch => {
-    const { name, type } = file
+let uploadToS3 = ({ temporaryAttachment, data }) => {
+  let putFileToS3 = new XMLHttpRequest()
 
-    const success = res => { // created upload url
-      const { filePath } = res.result
+  dispatch({ type: S3_UPLOAD_REQUEST })
 
-      dispatch({
-        type: S3_UPLOAD_REQUEST
-      })
+  putFileToS3.onload = res => {
+    dispatch({ type: S3_UPLOAD_SUCCESS })
 
-      const config = {
-        url   : res.result.preSignedURL,
-        method: 'PUT',
-        body  : file,
-        headers: {
-          'Content-Type': file.type
-        }
-      }
-
-      const success = res => { // uploaded to S3
-        dispatch({
-          type: S3_UPLOAD_SUCCESS
-        })
-
-        postAttachment({ id, assetType, category, file, filePath})(dispatch).then.catch
-      }
-
-      const error = res => {
-        dispatch({
-          type: S3_UPLOAD_FAILURE
-        })
-      }
-
-      axios(config).then(success).catch(error)
-
-      return res
-    }
-
-    postUploadUrl({ id, assetType, category, name, type })(dispatch).then(success)
+    postAttachment(temporaryAttachment)(dispatch)
   }
+
+  putFileToS3.onerror = res => {
+    dispatch({ type: S3_UPLOAD_FAILURE })
+  }
+
+  putFileToS3.upload.onprogress = res => {
+    dispatch({ type: S3_UPLOAD_PROGRESS })
+  }
+
+  putFileToS3.open('PUT', preSignedURL, true)
+  putFileToS3.setRequestHeader('Content-Type', type)
+  putFileToS3.send(file.data)
+
+  return res
 }

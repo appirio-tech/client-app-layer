@@ -14,7 +14,7 @@ export default function postAttachment({ id, assetType, category, file, filePath
     const options = {
       endpoint: '/v3/attachments',
       method  : 'POST',
-      schema  : Schemas.ATTACHMENT_ARRAY,
+      schema  : Schemas.ATTACHMENT,
       body: {
         param: {
           id       : id,
@@ -30,7 +30,8 @@ export default function postAttachment({ id, assetType, category, file, filePath
 
     const success = res => {
       dispatch({
-        type: ATTACHMENTS_POST_SUCCESS
+        type: ATTACHMENTS_POST_SUCCESS,
+        attachments: res.entities.attachments
       })
 
       return res
