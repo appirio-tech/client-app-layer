@@ -1,9 +1,6 @@
-import { CALL_API } from '../middleware/api'
-import { callApi } from '../middleware/api'
-import { Schemas } from '../middleware/schemas'
+import callApi from '../middleware/api'
+import Schemas from '../middleware/schemas'
 import merge from 'lodash/merge'
-
-const API_ROOT = process.env.API_URL || 'https://api.topcoder.com'
 
 export const STEP_FETCH_REQUEST = 'STEP_FETCH_REQUEST'
 export const STEP_FETCH_SUCCESS = 'STEP_FETCH_SUCCESS'
@@ -11,33 +8,32 @@ export const STEP_FETCH_FAILURE = 'STEP_FETCH_FAILURE'
 
 export function loadStep(projectId, stepId) {
   return (dispatch, getState) => {
-    const step = getState().entities.steps[stepId]
-
-    if (step) {
+    if (getState().entities.steps[stepId]) {
       return null
     }
 
     dispatch({type: STEP_FETCH_REQUEST })
 
     const config = {
-      method: 'GET',
-      endpoint: `${API_ROOT}/v3/work/${ projectId }/steps`,
+      endpoint: '/v3/work/' + projectId + '/steps',
       schema: Schemas.STEP
     }
 
-    return callApi(config)
-      .then( response => {
-        return dispatch({
-          response,
-          type: STEP_FETCH_SUCCESS
-        })
+    const success = response => {
+      return dispatch({
+        response,
+        type: STEP_FETCH_SUCCESS
       })
-      .catch( error => {
-        return dispatch({
-          type: STEP_FETCH_FAILURE,
-          error: error.message || 'Something bad happened'
-        })
+    }
+
+    const failure = error => {
+      return dispatch({
+        type: STEP_FETCH_FAILURE,
+        error: error.message || 'Something bad happened'
       })
+    }
+
+    return callApi(config).then(success).catch(failure)
   }
 }
 
@@ -62,27 +58,29 @@ export function createStep(projectId, values) {
 
     const config = {
       method: 'POST',
-      endpoint: `${API_ROOT}/v3/work/${ projectId }/steps`,
+      endpoint: '/v3/work/' + projectId + '/steps',
       schema: Schemas.STEP,
       data: {
         param: step
       }
     }
 
-    return callApi(config)
-      .then( response => {
-        return dispatch({
-          type: STEP_CREATE_SUCCESS,
-          response,
-          projectId
-        })
+    const success = response => {
+      return dispatch({
+        type: STEP_CREATE_SUCCESS,
+        response,
+        projectId
       })
-      .catch( error => {
-        return dispatch({
-          type: STEP_FAILURE,
-          error: error.message || 'Something bad happened'
-        })
+    }
+
+    const failure = error => {
+      return dispatch({
+        type: STEP_FAILURE,
+        error: error.message || 'Something bad happened'
       })
+    }
+
+    return callApi(config).then(success).catch(failure)
   }
 }
 
@@ -99,19 +97,21 @@ export function updateStep(projectId, stepId, values) {
 
     const config = {
       method: 'PUT',
-      endpoint: `${API_ROOT}/v3/work/${ projectId }/steps/${ stepId }`,
+      endpoint: '/v3/work/' + projectId + '/steps/' + stepId,
       schema: Schemas.STEP,
       data: {
         param: stepAfterUpdate
       }
     }
 
-    return callApi(config)
-      .then( response => {
-        return dispatch({ response, type: STEP_UPDATE_SUCCESS })
-      })
-      .catch( error => {
-        return dispatch({type: STEP_FAILURE, error: error.message || 'Something bad happened'})
-      })
+    const success = response => {
+      return dispatch({ response, type: STEP_UPDATE_SUCCESS })
+    }
+
+    const failure = error => {
+      return dispatch({type: STEP_FAILURE, error: error.message || 'Something bad happened'})
+    }
+
+    return callApi(config).then(success).catch(failure)
   }
 }

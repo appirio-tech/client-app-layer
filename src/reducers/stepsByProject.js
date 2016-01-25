@@ -1,24 +1,25 @@
 import merge from 'lodash/merge'
 import values from 'lodash/values'
-import find from 'lodash/find'
 import union from 'lodash/union'
 import {
-  STEPS_BY_PROJECT_GET_REQUEST,
-  STEPS_BY_PROJECT_GET_SUCCESS,
-  STEPS_BY_PROJECT_GET_FAILURE,
+  STEPS_BY_PROJECT_FETCH_REQUEST,
+  STEPS_BY_PROJECT_FETCH_SUCCESS,
+  STEPS_BY_PROJECT_FETCH_FAILURE
+} from '../actions/stepsByProject'
+import {
   STEP_CREATE_SUCCESS
-} from '../actions'
+} from '../actions/steps'
 
 export default function stepsByProject(state = {}, action) {
   switch(action.type) {
-    case STEPS_BY_PROJECT_GET_REQUEST:
+    case STEPS_BY_PROJECT_FETCH_REQUEST:
       return merge({}, state, {
         [action.projectId]: {
           isFetching: true
         }
       })
 
-    case STEPS_BY_PROJECT_GET_SUCCESS:
+    case STEPS_BY_PROJECT_FETCH_SUCCESS:
       return merge({}, state, {
         [action.projectId]: {
           items: action.response.result,
@@ -28,7 +29,7 @@ export default function stepsByProject(state = {}, action) {
         }
       })
 
-    case STEPS_BY_PROJECT_GET_FAILURE:
+    case STEPS_BY_PROJECT_FETCH_FAILURE:
       return merge({}, state, {
         [action.projectId]: {
           isFetching: false,
@@ -37,15 +38,20 @@ export default function stepsByProject(state = {}, action) {
       })
 
     case STEP_CREATE_SUCCESS:
-      const project = find(state.stepsByProject, action.projectId)
+      const project = state[action.projectId]
       const stepId = action.response.result
 
+      const before = project.items
+      const after = union(project.items, [stepId])
+
+      const newState = merge({}, state, {
+        [action.projectId]: {
+          items: after
+        }
+      })
+
       if (project) {
-        return merge({}, state, {
-          [action.projectId]: {
-            items: union(project.items, stepId)
-          }
-        })
+        return newState
       }
 
     default:

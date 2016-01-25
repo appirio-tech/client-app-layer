@@ -7,7 +7,7 @@ const profileSchema = new Schema('profiles', {
 const projectSchema = new Schema('projects')
 const stepSchema = new Schema('steps')
 
-export const Schemas = {
+export default {
   PROFILE: profileSchema,
   PROJECT: projectSchema,
   STEP: stepSchema,

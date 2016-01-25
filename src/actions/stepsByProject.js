@@ -1,35 +1,39 @@
-import { CALL_API } from '../middleware/api'
-import { Schemas } from '../middleware/schemas'
+import callApi from '../middleware/api'
+import Schemas from '../middleware/schemas'
 
-export const STEPS_BY_PROJECT_GET_REQUEST = 'STEPS_BY_PROJECT_GET_REQUEST'
-export const STEPS_BY_PROJECT_GET_SUCCESS = 'STEPS_BY_PROJECT_GET_SUCCESS'
-export const STEPS_BY_PROJECT_GET_FAILURE = 'STEPS_BY_PROJECT_GET_FAILURE'
+export const STEPS_BY_PROJECT_FETCH_REQUEST = 'STEPS_BY_PROJECT_FETCH_REQUEST'
+export const STEPS_BY_PROJECT_FETCH_SUCCESS = 'STEPS_BY_PROJECT_FETCH_SUCCESS'
+export const STEPS_BY_PROJECT_FETCH_FAILURE = 'STEPS_BY_PROJECT_FETCH_FAILURE'
 
-const API_ROOT = process.env.API_URL || 'https://api.topcoder.com'
-
-function getStepsByProject(id) {
-  return {
-    [CALL_API]: {
-      types: [
-        STEPS_BY_PROJECT_GET_REQUEST,
-        STEPS_BY_PROJECT_GET_SUCCESS,
-        STEPS_BY_PROJECT_GET_FAILURE
-      ],
-      endpoint: `${API_ROOT}/v3/projects/${id}/steps`,
-      schema: Schemas.STEP_ARRAY
-    },
-    projectId: id
-  }
-}
-
-export function loadStepsByProject(id) {
+export function loadStepsByProject(projectId) {
   return (dispatch, getState) => {
-    // const profile = getState().projects.profiles[id]
+    dispatch({
+      type: STEPS_BY_PROJECT_FETCH_REQUEST,
+      projectId
+    })
 
-    // if (profile && requiredFields.every(key => profile.hasOwnProperty(key))) {
-    //   return null
-    // }
+    const config = {
+      method: 'GET',
+      endpoint: '/v3/projects/' + projectId + '/steps',
+      schema: Schemas.STEP_ARRAY
+    }
 
-    return dispatch(getStepsByProject(id))
+    const success = response => {
+      return dispatch({
+        response,
+        type: STEPS_BY_PROJECT_FETCH_SUCCESS,
+        projectId
+      })
+    }
+
+    const failure = error => {
+      return dispatch({
+        type: STEPS_BY_PROJECT_FETCH_FAILURE,
+        error: error.message || 'Something bad happened',
+        projectId
+      })
+    }
+
+    return callApi(config).then(success).catch(failure)
   }
 }

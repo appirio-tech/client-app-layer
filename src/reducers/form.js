@@ -12,6 +12,15 @@ const form = formReducer.plugin({
       default:
         return state;
     }
+  },
+  stepRow: (state, action) => {
+    switch(action.type) {
+      case STEP_UPDATE_SUCCESS:
+        return undefined;
+
+      default:
+        return state;
+    }
   }
 })
 

@@ -7,7 +7,7 @@ import createLogger from 'redux-logger'
 import rootReducer from '../reducers'
 
 const finalCreateStore = compose(
-  applyMiddleware(thunk, checkUser, checkAuth, api),
+  applyMiddleware(thunk, checkUser),
   applyMiddleware(createLogger()),
   window.devToolsExtension ? window.devToolsExtension() : f => f
 )(createStore)
