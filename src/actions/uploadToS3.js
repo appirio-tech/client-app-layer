@@ -1,30 +1,45 @@
+import postAttachment from './postAttachment'
+import { getTempId } from '../actions/uploadFile'
+
 export const S3_UPLOAD_REQUEST  = 'S3_UPLOAD_REQUEST'
 export const S3_UPLOAD_PROGRESS = 'S3_UPLOAD_PROGRESS'
 export const S3_UPLOAD_SUCCESS  = 'S3_UPLOAD_SUCCESS'
 export const S3_UPLOAD_FAILURE  = 'S3_UPLOAD_FAILURE'
 
-let uploadToS3 = ({ temporaryAttachment, data }) => {
-  let putFileToS3 = new XMLHttpRequest()
+export default function uploadToS3(attachment) {
+  return dispatch => {
+    const { data, preSignedURL, fileType, tempId } = attachment
 
-  dispatch({ type: S3_UPLOAD_REQUEST })
+    let putFileToS3 = new XMLHttpRequest()
 
-  putFileToS3.onload = res => {
-    dispatch({ type: S3_UPLOAD_SUCCESS })
+    dispatch({ type: S3_UPLOAD_REQUEST })
 
-    postAttachment(temporaryAttachment)(dispatch)
+    putFileToS3.onload = res => {
+      dispatch({ type: S3_UPLOAD_SUCCESS })
+
+      postAttachment(attachment)(dispatch)
+    }
+
+    putFileToS3.onerror = res => {
+      dispatch({ type: S3_UPLOAD_FAILURE })
+    }
+
+    putFileToS3.upload.onprogress = res => {
+      const { lengthComputable, loaded, total } = res
+      const tempId = getTempId(attachment)
+
+      attachment.progress = Math.round(lengthComputable ? loaded * 100 / total : 0)
+
+      dispatch({
+        type: S3_UPLOAD_PROGRESS,
+        attachments: {
+          [tempId]: attachment
+        }
+      })
+    }
+
+    putFileToS3.open('PUT', preSignedURL, true)
+    putFileToS3.setRequestHeader('Content-Type', fileType)
+    putFileToS3.send(data)
   }
-
-  putFileToS3.onerror = res => {
-    dispatch({ type: S3_UPLOAD_FAILURE })
-  }
-
-  putFileToS3.upload.onprogress = res => {
-    dispatch({ type: S3_UPLOAD_PROGRESS })
-  }
-
-  putFileToS3.open('PUT', preSignedURL, true)
-  putFileToS3.setRequestHeader('Content-Type', type)
-  putFileToS3.send(file.data)
-
-  return res
 }

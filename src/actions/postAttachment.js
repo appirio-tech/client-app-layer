@@ -5,7 +5,9 @@ export const ATTACHMENTS_POST_REQUEST = 'ATTACHMENTS_POST_REQUEST'
 export const ATTACHMENTS_POST_SUCCESS = 'ATTACHMENTS_POST_SUCCESS'
 export const ATTACHMENTS_POST_FAILURE = 'ATTACHMENTS_POST_FAILURE'
 
-export default function postAttachment({ id, assetType, category, file, filePath }) {
+export default function postAttachment({
+  id, assetType, category, fileType, fileSize, filePath, fileName
+}) {
   return dispatch => {
     dispatch({
       type: ATTACHMENTS_POST_REQUEST
@@ -18,11 +20,11 @@ export default function postAttachment({ id, assetType, category, file, filePath
       body: {
         param: {
           id       : id,
-          fileName : file.name,
+          fileName : fileName,
           assetType: assetType,
-          fileType : file.type,
+          fileType : fileType,
           filePath : filePath,
-          fileSize : file.size,
+          fileSize : fileSize,
           category : category
         }
       }

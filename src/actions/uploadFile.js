@@ -1,78 +1,64 @@
 import postUploadUrl from './postUploadUrl'
-import postAttachment from './postAttachment'
+import uploadToS3 from './uploadToS3'
 
 export const READ_FILE_REQUEST  = 'READ_FILE_REQUEST'
 export const READ_FILE_SUCCESS  = 'READ_FILE_SUCCESS'
 export const READ_FILE_FAILURE  = 'READ_FILE_FAILURE'
-export const S3_UPLOAD_REQUEST  = 'S3_UPLOAD_REQUEST'
-export const S3_UPLOAD_PROGRESS = 'S3_UPLOAD_PROGRESS'
-export const S3_UPLOAD_SUCCESS  = 'S3_UPLOAD_SUCCESS'
-export const S3_UPLOAD_FAILURE  = 'S3_UPLOAD_FAILURE'
+export const UPLOAD_FILE_REQUEST  = 'UPLOAD_FILE_REQUEST'
+
+export function getTempId({ assetType, category, id, fileName }) {
+  return assetType + category + id + fileName
+}
 
 export function uploadFile({ id, assetType, category, file }) {
   return dispatch => {
+    const { name, type, size, data } = file
+
     let temporaryAttachment = { // temporary attachment object while uploading
       assetType: assetType,
       category : category,
-      fileName : file.name,
-      fileSize : file.size
-      fileType : file.type,
-      isImage  : file.type.match('image.*'),
-      id       : id
+      fileName : name,
+      fileSize : size,
+      fileType : type,
+      isImage  : type.match('image.*'),
+      id       : id,
+      progress : 0,
+      data     : data
     }
 
-    // let postUploadUrlSuccess = res => {
-    //   let { filePath, preSignedURL } = res.result
-    //   let putFileToS3                = new XMLHttpRequest()
+    const tempId = getTempId(temporaryAttachment)
 
-    //   temporaryAttachment.preSignedURL = preSignedURL
-    //   temporaryAttachment.filePath     = filePath
+    dispatch({
+      type: UPLOAD_FILE_REQUEST,
+      attachments: {
+        [tempId]: temporaryAttachment
+      }
+    })
 
-    //   dispatch({
-    //     type: S3_UPLOAD_REQUEST,
-    //     attachments: {
-    //       [name]: temporaryAttachment
-    //     }
-    //   })
+    const postUploadUrlSuccess = res => {
+      const { filePath, preSignedURL } = res.result
 
-    //   putFileToS3.onload = res => {
-    //     dispatch({
-    //       type: S3_UPLOAD_SUCCESS,
-    //       filePath: filePath
-    //     })
+      temporaryAttachment.filePath     = filePath
+      temporaryAttachment.preSignedURL = preSignedURL
 
-    //     postAttachment({ id, assetType, category, file, filePath})(dispatch)
-    //   }
+      uploadToS3(temporaryAttachment)(dispatch)
 
-    //   putFileToS3.onerror = res => {
-    //     dispatch({
-    //       type: S3_UPLOAD_FAILURE
-    //     })
-    //   }
-
-    //   putFileToS3.upload.onprogress = res => {
-    //     console.log('progress!!')
-    //   }
-
-    //   putFileToS3.open('PUT', preSignedURL, true)
-    //   putFileToS3.setRequestHeader('Content-Type', type)
-    //   putFileToS3.send(file.data)
-
-    //   return res
-    // }
-
-    let postUploadUrlGo = () => {
-      postUploadUrl({ id, assetType, category, name, type })(dispatch)
-        .then(postUploadUrlSuccess)
+      return res
     }
 
-    let readFile = () => {
+    const postUploadUrlGo = () => {
+      const postUploadUrlParams = { id, assetType, category, name, type }
+
+      postUploadUrl(postUploadUrlParams)(dispatch).then(postUploadUrlSuccess)
+    }
+
+    const readFile = () => {
       let reader = new FileReader()
 
       dispatch({
         type: READ_FILE_REQUEST,
         attachments: {
-          [name]: temporaryAttachment
+          [tempId]: temporaryAttachment
         }
       })
 
@@ -82,7 +68,7 @@ export function uploadFile({ id, assetType, category, file }) {
         dispatch({
           type: READ_FILE_SUCCESS,
           attachments: {
-            [name]: temporaryAttachment
+            [tempId]: temporaryAttachment
           }
         })
 
@@ -93,7 +79,7 @@ export function uploadFile({ id, assetType, category, file }) {
         dispatch({
           type: READ_FILE_FAILURE,
           attachments: {
-            [name]: temporaryAttachment
+            [tempId]: temporaryAttachment
           }
         })
 
