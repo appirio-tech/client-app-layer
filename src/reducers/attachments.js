@@ -1,12 +1,13 @@
-import { ATTACHMENTS_GET_SUCCESS } from '../actions/getAttachments'
-import { ATTACHMENTS_POST_SUCCESS } from '../actions/postAttachment'
+import { GET_ATTACHMENTS_SUCCESS } from '../actions/getAttachments'
+import { POST_ATTACHMENT_SUCCESS } from '../actions/postAttachment'
+import { DELETE_ATTACHMENT_SUCCESS } from '../actions/deleteAttachment'
 import { S3_UPLOAD_PROGRESS } from '../actions/uploadToS3'
 import { UPLOAD_FILE_REQUEST, getTempId } from '../actions/uploadFile'
 
 export default function attachments(state = [], action) {
 
   switch(action.type) {
-    case ATTACHMENTS_GET_SUCCESS:
+    case GET_ATTACHMENTS_SUCCESS:
     case UPLOAD_FILE_REQUEST:
     case S3_UPLOAD_PROGRESS:
       // set is image property
@@ -23,7 +24,7 @@ export default function attachments(state = [], action) {
       state = Object.assign({}, state, action.attachments);
     break;
 
-    case ATTACHMENTS_POST_SUCCESS:
+    case POST_ATTACHMENT_SUCCESS:
       // delete temporary attachments that have completed
       for (let key in action.attachments) {
         const tempId = getTempId(action.attachments[key])
@@ -32,6 +33,13 @@ export default function attachments(state = [], action) {
       }
 
       state = Object.assign({}, state, action.attachments);
+    break;
+
+    case DELETE_ATTACHMENT_SUCCESS:
+      debugger
+      const deleteId = action.attachment.fileId || getTempId(action.attachment)
+
+      delete state[deleteId]
     break;
   }
 

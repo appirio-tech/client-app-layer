@@ -1,16 +1,16 @@
 import { callApi } from '../middleware/api'
 import { Schemas } from '../middleware/schemas'
 
-export const ATTACHMENTS_POST_REQUEST = 'ATTACHMENTS_POST_REQUEST'
-export const ATTACHMENTS_POST_SUCCESS = 'ATTACHMENTS_POST_SUCCESS'
-export const ATTACHMENTS_POST_FAILURE = 'ATTACHMENTS_POST_FAILURE'
+export const POST_ATTACHMENT_REQUEST = 'POST_ATTACHMENT_REQUEST'
+export const POST_ATTACHMENT_SUCCESS = 'POST_ATTACHMENT_SUCCESS'
+export const POST_ATTACHMENT_FAILURE = 'POST_ATTACHMENT_FAILURE'
 
 export default function postAttachment({
   id, assetType, category, fileType, fileSize, filePath, fileName
 }) {
   return dispatch => {
     dispatch({
-      type: ATTACHMENTS_POST_REQUEST
+      type: POST_ATTACHMENT_REQUEST
     })
 
     const options = {
@@ -32,7 +32,7 @@ export default function postAttachment({
 
     const success = res => {
       dispatch({
-        type: ATTACHMENTS_POST_SUCCESS,
+        type: POST_ATTACHMENT_SUCCESS,
         attachments: res.entities.attachments
       })
 
@@ -41,7 +41,7 @@ export default function postAttachment({
 
     const error = res => {
       dispatch({
-        type: ATTACHMENTS_POST_FAILURE
+        type: POST_ATTACHMENT_FAILURE
       })
 
       return res

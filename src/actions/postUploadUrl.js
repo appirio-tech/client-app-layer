@@ -1,14 +1,14 @@
 import { callApi } from '../middleware/api'
 import { Schemas } from '../middleware/schemas'
 
-export const UPLOAD_URL_POST_REQUEST = 'UPLOAD_URL_POST_REQUEST'
-export const UPLOAD_URL_POST_SUCCESS = 'UPLOAD_URL_POST_SUCCESS'
-export const UPLOAD_URL_POST_FAILURE = 'UPLOAD_URL_POST_FAILURE'
+export const POST_UPLOAD_URL_REQUEST = 'POST_UPLOAD_URL_REQUEST'
+export const POST_UPLOAD_URL_SUCCESS = 'POST_UPLOAD_URL_SUCCESS'
+export const POST_UPLOAD_URL_FAILURE = 'POST_UPLOAD_URL_FAILURE'
 
 export default function postUploadUrl({ id, assetType, category, name, type }) {
   return dispatch => {
     dispatch({
-      type: UPLOAD_URL_POST_REQUEST
+      type: POST_UPLOAD_URL_REQUEST
     })
 
     const options = {
@@ -28,7 +28,7 @@ export default function postUploadUrl({ id, assetType, category, name, type }) {
 
     const success = res => {
       dispatch({
-        type: UPLOAD_URL_POST_SUCCESS
+        type: POST_UPLOAD_URL_SUCCESS
       })
 
       return res
@@ -36,7 +36,7 @@ export default function postUploadUrl({ id, assetType, category, name, type }) {
 
     const error = res => {
       dispatch({
-        type: UPLOAD_URL_POST_FAILURE
+        type: POST_UPLOAD_URL_FAILURE
       })
 
       return res

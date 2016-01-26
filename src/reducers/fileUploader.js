@@ -1,17 +1,23 @@
 import {
-  UPLOAD_URL_POST_REQUEST,
-  UPLOAD_URL_POST_SUCCESS,
-  UPLOAD_URL_POST_FAILURE
+  POST_UPLOAD_URL_REQUEST,
+  POST_UPLOAD_URL_SUCCESS,
+  POST_UPLOAD_URL_FAILURE
 } from '../actions/postUploadUrl'
+
+import { SET_FILE_UPLOADER } from '../actions/setFileUploader'
 
 export default function fileUploader(state, action) {
   switch(action.type) {
-    case UPLOAD_URL_POST_REQUEST:
+    case POST_UPLOAD_URL_REQUEST:
       state.requestingUploadUrl = true
     break;
 
-    case UPLOAD_URL_POST_SUCCESS:
-    case UPLOAD_URL_POST_FAILURE:
+    case SET_FILE_UPLOADER:
+      state = action.fileUploader
+    break;
+
+    case POST_UPLOAD_URL_SUCCESS:
+    case POST_UPLOAD_URL_FAILURE:
       state.requestingUploadUrl = false
     break;
   }

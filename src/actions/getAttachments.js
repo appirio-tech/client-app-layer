@@ -1,16 +1,14 @@
 import { callApi } from '../middleware/api'
 import { Schemas } from '../middleware/schemas'
 
-export const ATTACHMENTS_GET_REQUEST = 'ATTACHMENTS_GET_REQUEST'
-export const ATTACHMENTS_GET_SUCCESS = 'ATTACHMENTS_GET_SUCCESS'
-export const ATTACHMENTS_GET_FAILURE = 'ATTACHMENTS_GET_FAILURE'
-
-const API_ROOT = process.env.API_URL || 'https://api.topcoder.com'
+export const GET_ATTACHMENTS_REQUEST = 'GET_ATTACHMENTS_REQUEST'
+export const GET_ATTACHMENTS_SUCCESS = 'GET_ATTACHMENTS_SUCCESS'
+export const GET_ATTACHMENTS_FAILURE = 'GET_ATTACHMENTS_FAILURE'
 
 export function getAttachments({ id, assetType, category }) {
   return dispatch => {
     dispatch({
-      type: ATTACHMENTS_GET_REQUEST
+      type: GET_ATTACHMENTS_REQUEST
     })
 
     const options = {
@@ -21,7 +19,7 @@ export function getAttachments({ id, assetType, category }) {
 
     const success = res => {
       dispatch({
-        type: ATTACHMENTS_GET_SUCCESS,
+        type: GET_ATTACHMENTS_SUCCESS,
         attachments: res.entities.attachments
       })
 
@@ -30,7 +28,7 @@ export function getAttachments({ id, assetType, category }) {
 
     const error = res => {
       dispatch({
-        type: ATTACHMENTS_GET_FAILURE
+        type: GET_ATTACHMENTS_FAILURE
       })
 
       return res
