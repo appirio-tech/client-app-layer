@@ -1,14 +1,17 @@
+'use strict'
+
 import { GET_ATTACHMENTS_SUCCESS } from '../actions/getAttachments'
 import { POST_ATTACHMENT_SUCCESS } from '../actions/postAttachment'
 import { DELETE_ATTACHMENT_SUCCESS } from '../actions/deleteAttachment'
 import { S3_UPLOAD_PROGRESS } from '../actions/uploadToS3'
-import { UPLOAD_FILE_REQUEST, getTempId } from '../actions/uploadFile'
+import { UPLOAD_FILE_REQUEST, READ_FILE_SUCCESS, getTempId } from '../actions/uploadFile'
 
 export default function attachments(state = [], action) {
 
   switch(action.type) {
     case GET_ATTACHMENTS_SUCCESS:
     case UPLOAD_FILE_REQUEST:
+    case READ_FILE_SUCCESS:
     case S3_UPLOAD_PROGRESS:
       // set is image property
       for (let key in action.attachments) {
@@ -29,6 +32,8 @@ export default function attachments(state = [], action) {
       for (let key in action.attachments) {
         const tempId = getTempId(action.attachments[key])
 
+        action.attachments[key].preview = state[tempId].preview
+
         delete state[tempId]
       }
 
@@ -36,7 +41,6 @@ export default function attachments(state = [], action) {
     break;
 
     case DELETE_ATTACHMENT_SUCCESS:
-      debugger
       const deleteId = action.attachment.fileId || getTempId(action.attachment)
 
       delete state[deleteId]

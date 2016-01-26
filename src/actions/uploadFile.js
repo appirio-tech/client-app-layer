@@ -26,7 +26,7 @@ export function uploadFile({ id, assetType, category, file }) {
       data     : data
     }
 
-    const tempId = getTempId(temporaryAttachment)
+    let tempId = getTempId(temporaryAttachment)
 
     dispatch({
       type: UPLOAD_FILE_REQUEST,

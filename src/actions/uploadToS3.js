@@ -15,16 +15,24 @@ export default function uploadToS3(attachment) {
     dispatch({ type: S3_UPLOAD_REQUEST })
 
     putFileToS3.onload = res => {
-      dispatch({ type: S3_UPLOAD_SUCCESS })
+      if (res.target.status == 200) {
+        dispatch({ type: S3_UPLOAD_SUCCESS })
 
-      postAttachment(attachment)(dispatch)
+        postAttachment(attachment)(dispatch)
+      }
+      else {
+        attachment.errors = [res.target.status]
+
+        dispatch({
+          type: S3_UPLOAD_FAILURE,
+          attachments: {
+            [tempId]: attachment
+          }
+        })
+      }
     }
 
-    putFileToS3.onerror = res => {
-      dispatch({ type: S3_UPLOAD_FAILURE })
-    }
-
-    putFileToS3.upload.onprogress = res => {
+    putFileToS3.onprogress = res => {
       const { lengthComputable, loaded, total } = res
       const tempId = getTempId(attachment)
 

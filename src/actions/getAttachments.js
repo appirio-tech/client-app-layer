@@ -11,10 +11,12 @@ export function getAttachments({ id, assetType, category }) {
       type: GET_ATTACHMENTS_REQUEST
     })
 
+    const encoded = encodeURIComponent(`id=${id}&assetType=${assetType}&category=${category}`)
+
     const options = {
-      endpoint: `/v3/attachments?filter=id=${id}&assetType=${assetType}&category=${category}`,
+      endpoint: `/v3/attachments?filter=${encoded}`,
       method  : 'GET',
-      schema  : Schemas.ATTACHMENT_ARRAY
+      schema  : Schemas.ATTACHMENT_ARRAY,
     }
 
     const success = res => {

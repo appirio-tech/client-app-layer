@@ -1,5 +1,4 @@
 import { callApi } from '../middleware/api'
-import { Schemas } from '../middleware/schemas'
 
 export const DELETE_ATTACHMENT_REQUEST = 'DELETE_ATTACHMENT_REQUEST'
 export const DELETE_ATTACHMENT_SUCCESS = 'DELETE_ATTACHMENT_SUCCESS'
@@ -14,16 +13,18 @@ export function deleteAttachment(attachment) {
         type: DELETE_ATTACHMENT_REQUEST
       })
 
+      const encoded = encodeURIComponent(`category=${category}`)
+
       const options = {
-        endpoint: `/v3/attachments/${fileId}?category=${category}`,
-        method  : 'DELETE',
-        schema  : Schemas.ATTACHMENT_ARRAY
+        endpoint    : `/v3/attachments/${fileId}?filter=${encoded}`,
+        method      : 'DELETE',
+        ignoreResult: true
       }
 
       const success = res => {
         dispatch({
           type: DELETE_ATTACHMENT_SUCCESS,
-          attachment: res.result
+          attachment: attachment
         })
 
         return res
@@ -40,10 +41,9 @@ export function deleteAttachment(attachment) {
       return callApi(options).then(success).catch(error)
     }
   }
-  else {
-    dispatch({
-      type: DELETE_ATTACHMENT_SUCCESS,
-      attachment: attachment
-    })
+
+  return {
+    type: DELETE_ATTACHMENT_SUCCESS,
+    attachment: attachment
   }
 }
