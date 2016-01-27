@@ -1,44 +1,48 @@
-import { CALL_API, Schemas } from '../middleware/api'
+import callApi from '../middleware/api'
+import Schemas from '../middleware/schemas'
 
 export const USER_REQUEST = 'USER_REQUEST'
 export const USER_SUCCESS = 'USER_SUCCESS'
 export const USER_FAILURE = 'USER_FAILURE'
 
+export function loadUser(id) {
+  return (dispatch, getState) => {
+    if (getState().entities.users[id]) { return null }
+
+    dispatch({ type: USER_REQUEST })
+
+    const config = {
+      endpoint: `/v3/profiles/${id}`,
+      schema: Schemas.USER
+    }
+
+    const success = response => {
+      return dispatch({
+        response,
+        type: USER_SUCCESS
+      })
+    }
+
+    const failure = error => {
+      return dispatch({
+        type: USER_FAILURE,
+        error: error.message || 'Something bad happened'
+      })
+    }
+
+    return callApi(config).then(success).catch(failure)
+  }
+}
+
 export const UPDATE_PASSWORD_REQUEST = 'UPDATE_PASSWORD_REQUEST'
 export const UPDATE_PASSWORD_SUCCESS = 'UPDATE_PASSWORD_SUCCESS'
 export const UPDATE_PASSWORD_FAILURE = 'UPDATE_PASSWORD_FAILURE'
 
-// Fetches a single user from Github API.
-// Relies on the custom API middleware defined in ../middleware/api.js.
-function fetchUser(id) {
-  return {
-    [CALL_API]: {
-      types: [ USER_REQUEST, USER_SUCCESS, USER_FAILURE ],
-      endpoint: `/v3/profiles/${id}`,
-      schema: Schemas.USER
-    }
-  }
-}
-
-// Fetches a single user from Github API unless it is cached.
-// Relies on Redux Thunk middleware.
-export function loadUser(id, requiredFields = []) {
-  return (dispatch, getState) => {
-    const user = getState().entities.users[id]
-    if (user && requiredFields.every(key => user.hasOwnProperty(key))) {
-      return null
-    }
-
-    return dispatch(fetchUser(id))
-  }
-}
-
-// Fetches a single user from Github API unless it is cached.
-// Relies on Redux Thunk middleware.
 export function updatePassword({ currentPassword, password }) {
   return (dispatch, getState) => {
     const id = getState().user.id
-    const body = {
+
+    const data = {
       param: {
         credential: {
           currentPassword,
@@ -47,14 +51,28 @@ export function updatePassword({ currentPassword, password }) {
       }
     }
 
-    dispatch({
-      [CALL_API]: {
-        types: [ UPDATE_PASSWORD_REQUEST, UPDATE_PASSWORD_SUCCESS, UPDATE_PASSWORD_FAILURE ],
-        endpoint: `/v3/users/${id}/`,
-        method: 'PATCH',
-        ignoreResult: true,
-        body
-      }
-    })
+    dispatch({ type: USER_REQUEST })
+
+    const config = {
+      endpoint: `/v3/users/${id}/`,
+      method: 'PATCH',
+      ignoreResult: true,
+      data
+    }
+
+    const success = response => {
+      return dispatch({
+        type: USER_SUCCESS
+      })
+    }
+
+    const failure = error => {
+      return dispatch({
+        type: USER_FAILURE,
+        error: error.message || 'Something bad happened'
+      })
+    }
+
+    return callApi(config).then(success).catch(failure)
   }
 }

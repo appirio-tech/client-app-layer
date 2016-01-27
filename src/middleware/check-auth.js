@@ -12,26 +12,20 @@ const AUTH0_TOKEN_NAME = process.env.AUTH0_TOKEN_NAME || 'userJWTToken'
 // Bind our token refreshes to the same promise chain
 let refreshPromise = null
 
-export default store => next => action => {
-
-  // Continue if there is no API call associated
-  if (typeof action[CALL_API] === 'undefined') {
-    return next(action)
-  }
-
+export default () => {
   const token = trim(localStorage.userJWTToken)
   const expires = expiresIn(token)
   const fresh = expires > 60
 
   // Continue if the token is fresh
   if (fresh) {
-    return next(action)
+    return Promise.resolve(true)
   }
 
   // If we are already refreshing the token for other actions, append this
   // request to the chain
   if (refreshPromise) {
-    return refreshPromise = refreshPromise.then( () => next(action) )
+    return refreshPromise
   }
 
   // Configure our fresh request
@@ -53,9 +47,6 @@ export default store => next => action => {
 
         // Clear our promise chain
         refreshPromise = null
-
-        // Continue with our action
-        next(action)
       } else {
         throw 'Token refresh failed'
       }
