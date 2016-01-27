@@ -14,12 +14,12 @@ const uploadUrlSchema = new Schema('uploadUrls', {
 })
 
 export default {
-  PROFILE: profileSchema,
-  PROJECT: projectSchema,
-  STEP: stepSchema,
-  STEP_ARRAY: arrayOf(stepSchema)
+  PROFILE         : profileSchema,
+  PROJECT         : projectSchema,
+  STEP            : stepSchema,
+  STEP_ARRAY      : arrayOf(stepSchema),
   ATTACHMENT      : attachmentSchema,
   ATTACHMENT_ARRAY: arrayOf(attachmentSchema),
-  UPLOAD_URL       : uploadUrlSchema,
-  UPLOAD_URL_ARRAY : arrayOf(uploadUrlSchema)
+  UPLOAD_URL      : uploadUrlSchema,
+  UPLOAD_URL_ARRAY: arrayOf(uploadUrlSchema)
 }

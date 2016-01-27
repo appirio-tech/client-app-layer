@@ -39,24 +39,7 @@ export default function callApi({ schema, endpoint, ignoreResult, method, data }
     }
   }
 
-<<<<<<< 9afd70ff414068ef7a7728282253ab9c8d3aa631
   return checkAuth()
     .then(executeRequest)
     .then(handleResponse)
-=======
-  const [ requestType, successType, failureType ] = types
-  next(actionWith({ type: requestType }))
-
-  return callApi(callAPI)
-    .then( response => {
-      const successAction = actionWith({ response, type: successType })
-      next(successAction)
-    })
-    .catch( error => {
-      const errorAction = actionWith({type: failureType, error: error.message || 'Something bad happened'})
-      next(errorAction)
-    })
-
->>>>>>> dont need original anymore
 }
-
