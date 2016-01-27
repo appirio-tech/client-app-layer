@@ -16,6 +16,8 @@ import {
   DELETE_ATTACHMENT_FAILURE
 } from '../actions/deleteAttachment'
 
+import { merge } from 'lodash'
+
 import { SET_FILE_UPLOADER } from '../actions/setFileUploader'
 
 export default function fileUploader(state = {}, action) {

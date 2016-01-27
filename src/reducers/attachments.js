@@ -5,10 +5,7 @@ import { POST_ATTACHMENT_SUCCESS } from '../actions/postAttachment'
 import { DELETE_ATTACHMENT_SUCCESS } from '../actions/deleteAttachment'
 import { S3_UPLOAD_PROGRESS } from '../actions/uploadToS3'
 import { UPLOAD_FILE_REQUEST, READ_FILE_SUCCESS, getTempId } from '../actions/uploadFile'
-
-import merge from 'lodash'
-debugger
-// import mapValues from 'lodash/mapValues'
+import { merge, mapValues, omit } from 'lodash'
 
 export default function attachments(state = [], action) {
   switch(action.type) {
@@ -22,7 +19,7 @@ export default function attachments(state = [], action) {
         return attachment
       })
 
-      return merge({}, state, isImageAttachments);
+      return merge({}, state, isImageAttachments)
     break;
 
     case POST_ATTACHMENT_SUCCESS:
