@@ -4,12 +4,26 @@ import {
   POST_UPLOAD_URL_FAILURE
 } from '../actions/postUploadUrl'
 
+import {
+  GET_ATTACHMENTS_REQUEST,
+  GET_ATTACHMENTS_SUCCESS,
+  GET_ATTACHMENTS_FAILURE
+} from '../actions/getAttachments'
+
+import {
+  DELETE_ATTACHMENT_REQUEST,
+  DELETE_ATTACHMENT_SUCCESS,
+  DELETE_ATTACHMENT_FAILURE
+} from '../actions/deleteAttachment'
+
 import { SET_FILE_UPLOADER } from '../actions/setFileUploader'
 
 export default function fileUploader(state, action) {
   switch(action.type) {
     case POST_UPLOAD_URL_REQUEST:
-      state.requestingUploadUrl = true
+    case GET_ATTACHMENTS_REQUEST:
+    case DELETE_ATTACHMENT_REQUEST:
+      state.loading = true
     break;
 
     case SET_FILE_UPLOADER:
@@ -18,7 +32,11 @@ export default function fileUploader(state, action) {
 
     case POST_UPLOAD_URL_SUCCESS:
     case POST_UPLOAD_URL_FAILURE:
-      state.requestingUploadUrl = false
+    case GET_ATTACHMENTS_SUCCESS:
+    case GET_ATTACHMENTS_FAILURE:
+    case DELETE_ATTACHMENT_SUCCESS:
+    case DELETE_ATTACHMENT_FAILURE:
+      state.loading = false
     break;
   }
 
