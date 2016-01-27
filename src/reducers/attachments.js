@@ -6,50 +6,49 @@ import { DELETE_ATTACHMENT_SUCCESS } from '../actions/deleteAttachment'
 import { S3_UPLOAD_PROGRESS } from '../actions/uploadToS3'
 import { UPLOAD_FILE_REQUEST, READ_FILE_SUCCESS, getTempId } from '../actions/uploadFile'
 
-export default function attachments(state = [], action) {
+import merge from 'lodash'
+debugger
+// import mapValues from 'lodash/mapValues'
 
+export default function attachments(state = [], action) {
   switch(action.type) {
     case GET_ATTACHMENTS_SUCCESS:
     case UPLOAD_FILE_REQUEST:
     case READ_FILE_SUCCESS:
     case S3_UPLOAD_PROGRESS:
-      // set is image property
-      for (let key in action.attachments) {
-        if (action.attachments[key].isImage == undefined) {
-          action.attachments[key].isImage = false
+      const isImageAttachments = mapValues(action.attachments, attachment => {
+        attachment.isImage = attachment.fileType && attachment.fileType.match('image.*')
 
-          if (action.attachments[key].fileType) {
-            action.attachments[key].isImage = action.attachments[key].fileType.match('image.*')
-          }
-        }
-      }
+        return attachment
+      })
 
-      state = Object.assign({}, state, action.attachments);
+      return merge({}, state, isImageAttachments);
     break;
 
     case POST_ATTACHMENT_SUCCESS:
-      // delete temporary attachments that have completed
-      for (let key in action.attachments) {
-        const tempId = getTempId(action.attachments[key])
+      const previewAttachments = mapValues(action.attachments, attachment => {
+        const tempId       = getTempId(attachment)
+        attachment.preview = state[tempId].preview
 
-        action.attachments[key].preview = state[tempId].preview
+        return attachment
+      })
 
-        delete state[tempId]
-      }
+      const tempIds = action.attachments.map(attachment => {
+        getTempId(attachment)
+      })
 
-      state = Object.assign({}, state, action.attachments);
+      const cleanedAttachments = omit(state, tempIds)
+
+      return merge(cleanedAttachments, previewAttachments)
     break;
 
     case DELETE_ATTACHMENT_SUCCESS:
       const deleteId = action.attachment.fileId || getTempId(action.attachment)
 
-      delete state[deleteId]
+      return omit(state, [deleteId])
     break;
+
+    default:
+      return state
   }
-
-  return state
 }
-
-  // if (action.type == 'ATTACHMENT_UPLOAD') {
-  //   state.attachments[action.attachment.name] = action.attachment
-  // }

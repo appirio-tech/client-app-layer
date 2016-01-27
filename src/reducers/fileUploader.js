@@ -18,16 +18,16 @@ import {
 
 import { SET_FILE_UPLOADER } from '../actions/setFileUploader'
 
-export default function fileUploader(state, action) {
+export default function fileUploader(state = {}, action) {
   switch(action.type) {
     case POST_UPLOAD_URL_REQUEST:
     case GET_ATTACHMENTS_REQUEST:
     case DELETE_ATTACHMENT_REQUEST:
-      state.loading = true
+      return merge({}, state, { loading: true })
     break;
 
     case SET_FILE_UPLOADER:
-      state = action.fileUploader
+      return merge({}, state, action.fileUploader)
     break;
 
     case POST_UPLOAD_URL_SUCCESS:
@@ -36,9 +36,10 @@ export default function fileUploader(state, action) {
     case GET_ATTACHMENTS_FAILURE:
     case DELETE_ATTACHMENT_SUCCESS:
     case DELETE_ATTACHMENT_FAILURE:
-      state.loading = false
+      return merge({}, state, { loading: false })
     break;
-  }
 
-  return state || {}
+    default:
+      return state
+  }
 }
