@@ -24,8 +24,11 @@ export default function attachments(state = [], action) {
 
     case POST_ATTACHMENT_SUCCESS:
       const previewAttachments = mapValues(action.attachments, attachment => {
-        const tempId       = getTempId(attachment)
-        attachment.preview = state[tempId].preview
+        const tempId = getTempId(attachment)
+
+        if (state[tempId]) {
+          attachment.preview = state[tempId].preview
+        }
 
         return attachment
       })
