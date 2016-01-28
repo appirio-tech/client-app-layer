@@ -1,5 +1,5 @@
-import { callApi } from '../middleware/api'
-import { Schemas } from '../middleware/schemas'
+import callApi from '../middleware/api'
+import Schemas from '../middleware/schemas'
 
 export const POST_UPLOAD_URL_REQUEST = 'POST_UPLOAD_URL_REQUEST'
 export const POST_UPLOAD_URL_SUCCESS = 'POST_UPLOAD_URL_SUCCESS'

@@ -1,4 +1,4 @@
-import { callApi } from '../middleware/api'
+import callApi from '../middleware/api'
 
 export const DELETE_ATTACHMENT_REQUEST = 'DELETE_ATTACHMENT_REQUEST'
 export const DELETE_ATTACHMENT_SUCCESS = 'DELETE_ATTACHMENT_SUCCESS'

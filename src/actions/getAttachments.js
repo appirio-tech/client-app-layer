@@ -1,5 +1,5 @@
-import { callApi } from '../middleware/api'
-import { Schemas } from '../middleware/schemas'
+import callApi from '../middleware/api'
+import Schemas from '../middleware/schemas'
 
 export const GET_ATTACHMENTS_REQUEST = 'GET_ATTACHMENTS_REQUEST'
 export const GET_ATTACHMENTS_SUCCESS = 'GET_ATTACHMENTS_SUCCESS'
