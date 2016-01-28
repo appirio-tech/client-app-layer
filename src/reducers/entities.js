@@ -3,7 +3,8 @@ import merge from 'lodash/merge'
 const defaultState = {
   profiles: {},
   projects: {},
-  steps: {}
+  steps: {},
+  uploadUrls: {}
 }
 
 // Updates an entity cache in response to any action with response.entities.

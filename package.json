@@ -1,5 +1,6 @@
 {
   "name": "appirio-tech-client-app-layer",
+  "version": "0.0.0",
   "repository": {
     "type": "git",
     "url": "https://github.com/appirio-tech/client-app-layer.git"
@@ -26,7 +27,7 @@
     "redux-thunk": "^0.1.0"
   },
   "devDependencies": {
-    "appirio-tech-webpack-config": "^0.1.5",
+    "appirio-tech-webpack-config": "0.x.x",
     "coffee-script": "^1.10.0",
     "concurrently": "^0.1.1",
     "express": "^4.13.3",
