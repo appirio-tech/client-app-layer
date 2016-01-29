@@ -16,6 +16,7 @@
     "jwt-decode": "^1.4.0",
     "lodash": "^4.0.0",
     "normalizr": "^1.0.0",
+    "q": "^1.4.1",
     "react": "^0.14.0",
     "react-dom": "^0.14.0",
     "react-redux": "^4.0.0",

@@ -5,10 +5,10 @@ export const POST_ATTACHMENT_REQUEST = 'POST_ATTACHMENT_REQUEST'
 export const POST_ATTACHMENT_SUCCESS = 'POST_ATTACHMENT_SUCCESS'
 export const POST_ATTACHMENT_FAILURE = 'POST_ATTACHMENT_FAILURE'
 
-export default function postAttachment({
-  id, assetType, category, fileType, fileSize, filePath, fileName
-}) {
+export default function postAttachment(attachment) {
   return dispatch => {
+    const { id, assetType, category, fileType, fileSize, filePath, fileName } = attachment
+
     dispatch({
       type: POST_ATTACHMENT_REQUEST
     })
@@ -17,7 +17,7 @@ export default function postAttachment({
       endpoint: '/v3/attachments',
       method  : 'POST',
       schema  : Schemas.ATTACHMENT,
-      body: {
+      data: {
         param: {
           id       : id,
           fileName : fileName,

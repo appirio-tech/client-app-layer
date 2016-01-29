@@ -28,7 +28,7 @@ export default function callApi({ schema, endpoint, ignoreResult, method, data }
       config.data = JSON.stringify(data)
     }
 
-    return axios(config) 
+    return axios(config)
   }
 
   const handleResponse = (res) => {

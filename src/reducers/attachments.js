@@ -4,7 +4,13 @@ import { GET_ATTACHMENTS_SUCCESS } from '../actions/getAttachments'
 import { POST_ATTACHMENT_SUCCESS } from '../actions/postAttachment'
 import { DELETE_ATTACHMENT_SUCCESS } from '../actions/deleteAttachment'
 import { S3_UPLOAD_PROGRESS } from '../actions/uploadToS3'
-import { UPLOAD_FILE_REQUEST, READ_FILE_SUCCESS, getTempId } from '../actions/uploadFile'
+import { POST_UPLOAD_URL_FAILURE } from '../actions/postUploadUrl'
+import {
+  UPLOAD_FILE_REQUEST,
+  READ_FILE_SUCCESS,
+  getTempId,
+  UPLOAD_FILE_FAILURE
+} from '../actions/uploadFile'
 import { merge, mapValues, omit, map } from 'lodash'
 
 export default function attachments(state = [], action) {
@@ -40,6 +46,16 @@ export default function attachments(state = [], action) {
       const cleanedAttachments = omit(state, tempIds)
 
       return merge(cleanedAttachments, previewAttachments)
+    break;
+
+    case UPLOAD_FILE_FAILURE:
+      const errorAttachments = mapValues(action.attachments, attachment => {
+        attachment.errors = ['something happened']
+
+        return attachment
+      })
+
+      return merge({}, state, errorAttachments)
     break;
 
     case DELETE_ATTACHMENT_SUCCESS:

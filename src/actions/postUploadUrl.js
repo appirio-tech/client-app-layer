@@ -5,8 +5,10 @@ export const POST_UPLOAD_URL_REQUEST = 'POST_UPLOAD_URL_REQUEST'
 export const POST_UPLOAD_URL_SUCCESS = 'POST_UPLOAD_URL_SUCCESS'
 export const POST_UPLOAD_URL_FAILURE = 'POST_UPLOAD_URL_FAILURE'
 
-export default function postUploadUrl({ id, assetType, category, name, type }) {
+export default function postUploadUrl(attachment) {
   return dispatch => {
+    const { id, assetType, category, fileName, fileType } = attachment
+
     dispatch({
       type: POST_UPLOAD_URL_REQUEST
     })
@@ -15,12 +17,12 @@ export default function postUploadUrl({ id, assetType, category, name, type }) {
       endpoint: '/v3/attachments/uploadurl',
       method  : 'POST',
       schema  : Schemas.UPLOAD_URL_ARRAY,
-      body: {
+      data: {
         param: {
           id       : id,
-          fileName : name,
+          fileName : fileName,
           assetType: assetType,
-          fileType : type,
+          fileType : fileType,
           category : category
         }
       }
@@ -35,9 +37,7 @@ export default function postUploadUrl({ id, assetType, category, name, type }) {
     }
 
     const error = res => {
-      dispatch({
-        type: POST_UPLOAD_URL_FAILURE
-      })
+      dispatch({ type: POST_UPLOAD_URL_FAILURE })
 
       return res
     }
