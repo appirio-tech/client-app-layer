@@ -31,7 +31,7 @@ export default function uploadToS3(attachment) {
       }
     }
 
-    putFileToS3.onprogress = res => {
+    putFileToS3.upload.onprogress = res => {
       // TODO, move this out
       const { lengthComputable, loaded, total } = res
       const tempId = getTempId(attachment)
