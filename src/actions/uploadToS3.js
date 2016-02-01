@@ -1,5 +1,4 @@
 import Q from 'q'
-export { merge } from 'lodash'
 
 export const S3_UPLOAD_REQUEST  = 'S3_UPLOAD_REQUEST'
 export const S3_UPLOAD_SUCCESS  = 'S3_UPLOAD_SUCCESS'
