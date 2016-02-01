@@ -3,13 +3,13 @@
 import { GET_ATTACHMENTS_SUCCESS } from '../actions/getAttachments'
 import { POST_ATTACHMENT_SUCCESS } from '../actions/postAttachment'
 import { DELETE_ATTACHMENT_SUCCESS } from '../actions/deleteAttachment'
-import { S3_UPLOAD_PROGRESS } from '../actions/uploadToS3'
 import { POST_UPLOAD_URL_FAILURE } from '../actions/postUploadUrl'
 import {
   UPLOAD_FILE_REQUEST,
   READ_FILE_SUCCESS,
   getTempId,
-  UPLOAD_FILE_FAILURE
+  UPLOAD_FILE_FAILURE,
+  UPLOAD_FILE_PROGRESS
 } from '../actions/uploadFile'
 import { merge, mapValues, omit, map } from 'lodash'
 
@@ -18,7 +18,7 @@ export default function attachments(state = [], action) {
     case GET_ATTACHMENTS_SUCCESS:
     case UPLOAD_FILE_REQUEST:
     case READ_FILE_SUCCESS:
-    case S3_UPLOAD_PROGRESS:
+    case UPLOAD_FILE_PROGRESS:
       const isImageAttachments = mapValues(action.attachments, attachment => {
         attachment.isImage = attachment.fileType && attachment.fileType.match('image.*')
 

@@ -1,16 +1,12 @@
-import { getTempId } from '../actions/uploadFile'
 import Q from 'q'
 export { merge } from 'lodash'
 
 export const S3_UPLOAD_REQUEST  = 'S3_UPLOAD_REQUEST'
-export const S3_UPLOAD_PROGRESS = 'S3_UPLOAD_PROGRESS'
 export const S3_UPLOAD_SUCCESS  = 'S3_UPLOAD_SUCCESS'
 export const S3_UPLOAD_FAILURE  = 'S3_UPLOAD_FAILURE'
 
-export default function uploadToS3(attachment) {
+export default function uploadToS3(file, preSignedURL, onprogress) {
   return dispatch => {
-    const { data, preSignedURL, fileType, tempId } = attachment
-
     let deferred = Q.defer()
     let putFileToS3 = new XMLHttpRequest()
 
@@ -31,23 +27,11 @@ export default function uploadToS3(attachment) {
       }
     }
 
-    putFileToS3.upload.onprogress = res => {
-      // TODO, move this out
-      const { lengthComputable, loaded, total } = res
-      const tempId = getTempId(attachment)
-      const progress = Math.round(lengthComputable ? loaded * 100 / total : 0)
-
-      dispatch({
-        type: S3_UPLOAD_PROGRESS,
-        attachments: {
-          [tempId]: merge({}, attachment, { progress })
-        }
-      })
-    }
+    putFileToS3.upload.onprogress = onprogress
 
     putFileToS3.open('PUT', preSignedURL, true)
-    putFileToS3.setRequestHeader('Content-Type', fileType)
-    putFileToS3.send(data)
+    putFileToS3.setRequestHeader('Content-Type', file.type)
+    putFileToS3.send(file)
 
     return deferred.promise
   }

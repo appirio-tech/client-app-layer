@@ -8,6 +8,7 @@ export const READ_FILE_SUCCESS   = 'READ_FILE_SUCCESS'
 export const READ_FILE_FAILURE   = 'READ_FILE_FAILURE'
 export const UPLOAD_FILE_REQUEST = 'UPLOAD_FILE_REQUEST'
 export const UPLOAD_FILE_SUCCESS = 'UPLOAD_FILE_SUCCESS'
+export const UPLOAD_FILE_PROGRESS = 'UPLOAD_FILE_PROGRESS'
 export const UPLOAD_FILE_FAILURE = 'UPLOAD_FILE_FAILURE'
 
 export function getTempId({ assetType, category, id, fileName }) {
@@ -32,6 +33,18 @@ export function uploadFile({ id, assetType, category, file }) {
 
     let tempId = getTempId(temporaryAttachment)
 
+    const onprogress = (res) => {
+      const { lengthComputable, loaded, total } = res
+      const progress = Math.round(lengthComputable ? loaded * 100 / total : 0)
+
+      dispatch({
+        type: UPLOAD_FILE_PROGRESS,
+        attachments: {
+          [tempId]: merge({}, temporaryAttachment, { progress })
+        }
+      })
+    }
+
     const postUploadUrlGo = () => {
       const error = res => {
         dispatch({
@@ -48,7 +61,7 @@ export function uploadFile({ id, assetType, category, file }) {
         const { filePath, preSignedURL } = res.result
         const signedAttachment = merge({}, temporaryAttachment, { filePath, preSignedURL })
 
-        uploadToS3(signedAttachment)(dispatch).then(res => {
+        uploadToS3(file, preSignedURL, onprogress)(dispatch).then(res => {
           postAttachment(signedAttachment)(dispatch).then(res => {
             if (!res.entities) { // false positive, i.e status: 500
               error()
@@ -74,6 +87,7 @@ export function uploadFile({ id, assetType, category, file }) {
       }
     })
 
+    // TODO: move read file out
     const readFile = () => {
       let reader = new FileReader()
 
