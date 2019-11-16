@@ -75,7 +75,7 @@ export function createStep(projectId, values) {
 
     const failure = error => {
       return dispatch({
-        type: STEP_FAILURE,
+        type: STEP_CREATE_FAILURE,
         error: error.message || 'Something bad happened'
       })
     }
@@ -109,7 +109,7 @@ export function updateStep(projectId, stepId, values) {
     }
 
     const failure = error => {
-      return dispatch({type: STEP_FAILURE, error: error.message || 'Something bad happened'})
+      return dispatch({type: STEP_UPDATE_FAILURE, error: error.message || 'Something bad happened'})
     }
 
     return callApi(config).then(success).catch(failure)
