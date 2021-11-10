@@ -10,7 +10,7 @@
   "dependencies": {
     "axios": "^0.8.1",
     "history": "^1.17.0",
-    "html-webpack-plugin": "^1.7.0",
+    "html-webpack-plugin": "^4.0.0",
     "humps": "^0.6.0",
     "isomorphic-fetch": "^2.1.1",
     "jwt-decode": "^1.4.0",
