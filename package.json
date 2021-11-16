@@ -8,7 +8,7 @@
   "license": "MIT",
   "main": "./src/index.js",
   "dependencies": {
-    "axios": "^0.8.1",
+    "axios": "^0.24.0",
     "history": "^1.17.0",
     "html-webpack-plugin": "^1.7.0",
     "humps": "^0.6.0",
